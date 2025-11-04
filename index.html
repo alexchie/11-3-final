@@ -630,7 +630,57 @@
             renderCart();
         }
 
+        // 壓縮圖片函數
+        async function compressImage(file, maxWidth = 1200, quality = 0.7) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        // 如果圖片寬度超過maxWidth，按比例縮小
+                        if (width > maxWidth) {
+                            height = (height * maxWidth) / width;
+                            width = maxWidth;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // 轉換為base64，使用指定的品質
+                        canvas.toBlob(
+                            (blob) => {
+                                const compressedReader = new FileReader();
+                                compressedReader.onload = (event) => resolve(event.target.result);
+                                compressedReader.onerror = reject;
+                                compressedReader.readAsDataURL(blob);
+                            },
+                            'image/jpeg',
+                            quality
+                        );
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
         async function submitOrder() {
+            // 獲取提交按鈕並禁用，防止重複提交
+            const submitButton = document.querySelector('.submit-order');
+            submitButton.disabled = true;
+            submitButton.style.opacity = '0.6';
+            submitButton.style.cursor = 'not-allowed';
+            submitButton.textContent = '處理中...';
+
             const name = document.getElementById('customerName').value;
             const phone = document.getElementById('customerPhone').value;
             const email = document.getElementById('customerEmail').value;
@@ -646,17 +696,29 @@
 
             if (!name || !phone || !email || !storeType || !storeCity || !storeName || !account || !screenshotFile) {
                 alert('請填寫所有必填欄位並上傳匯款截圖！');
+                submitButton.disabled = false;
+                submitButton.style.opacity = '1';
+                submitButton.style.cursor = 'pointer';
+                submitButton.textContent = '確認送出訂單';
                 return;
             }
 
             // 驗證 Email 格式
             if (!email.includes('@') || email === '@gmail.com') {
                 alert('請輸入完整的 Email 地址！');
+                submitButton.disabled = false;
+                submitButton.style.opacity = '1';
+                submitButton.style.cursor = 'pointer';
+                submitButton.textContent = '確認送出訂單';
                 return;
             }
 
             if (cart.length === 0) {
                 alert('購物車是空的！');
+                submitButton.disabled = false;
+                submitButton.style.opacity = '1';
+                submitButton.style.cursor = 'pointer';
+                submitButton.textContent = '確認送出訂單';
                 return;
             }
 
@@ -668,13 +730,20 @@
             // 合併姓名和匿名稱號
             const nameWithNickname = `${name}(${lineNickname})`;
 
-            // 將截圖轉換為 base64
-            const screenshotBase64 = await new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.onerror = reject;
-                reader.readAsDataURL(screenshotFile);
-            });
+            // 顯示處理進度
+            document.getElementById('orderSummary').innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="font-size: 3em;">📸</div>
+                    <h3>正在處理圖片...</h3>
+                    <p style="color: #666; margin-top: 10px;">請稍候，圖片壓縮中</p>
+                </div>
+            `;
+
+            // 壓縮截圖（最大寬度1200px，品質0.7）
+            const screenshotBase64 = await compressImage(screenshotFile, 1200, 0.7);
+
+            console.log('原始檔案大小:', screenshotFile.size, 'bytes');
+            console.log('壓縮後大小:', screenshotBase64.length, 'bytes');
 
             const orderData = {
                 orderTime,
@@ -688,9 +757,10 @@
                 screenshotFilename: screenshotFile.name
             };
 
+            // 更新為傳送狀態
             document.getElementById('orderSummary').innerHTML = `
                 <div style="text-align: center; padding: 40px;">
-                    <div style="font-size: 3em;">⏳</div>
+                    <div style="font-size: 3em;">📤</div>
                     <h3>正在送出訂單...</h3>
                     <p style="color: #666; margin-top: 10px;">請稍候，資料傳送中</p>
                 </div>
@@ -714,12 +784,8 @@
                         sendEmail: true
                     })
                 });
-                
-                console.log('資料已送出');
-                
-                await new Promise(resolve => setTimeout(resolve, 3000));
-                
-                console.log('訂單處理完成');
+
+                console.log('訂單已成功送出');
 
                 const summaryHTML = `
                     <div class="success-message">
@@ -760,6 +826,11 @@
                         <p>請稍後再試，或直接聯繫我們</p>
                     </div>
                 `;
+                // 重新啟用提交按鈕
+                submitButton.disabled = false;
+                submitButton.style.opacity = '1';
+                submitButton.style.cursor = 'pointer';
+                submitButton.textContent = '確認送出訂單';
             }
         }
 
