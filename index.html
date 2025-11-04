@@ -385,16 +385,16 @@
                     <input type="text" id="customerName" required>
                 </div>
                 <div class="form-group">
+                    <label>Line 匿名稱號 (若無則填寫「無」，僅方便聯絡用)</label>
+                    <input type="text" id="lineNickname" placeholder="請輸入Line稱號或填寫「無」">
+                </div>
+                <div class="form-group">
                     <label>電話 *</label>
                     <input type="tel" id="customerPhone" required>
                 </div>
                 <div class="form-group">
                     <label>Email *</label>
                     <input type="email" id="customerEmail" value="@gmail.com" required>
-                </div>
-                <div class="form-group">
-                    <label>Line 匿名稱號 (若無則填寫「無」，僅方便聯絡用)</label>
-                    <input type="text" id="lineNickname" placeholder="請輸入Line稱號或填寫「無」">
                 </div>
 
                 <div class="form-group">
@@ -645,6 +645,9 @@
             const total = subtotal + shippingFee;
             const orderTime = new Date().toLocaleString('zh-TW');
 
+            // 合併姓名和匿名稱號
+            const nameWithNickname = `${name}(${lineNickname})`;
+
             // 將截圖轉換為 base64
             const screenshotBase64 = await new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -655,7 +658,7 @@
 
             const orderData = {
                 orderTime,
-                customer: { name, phone, email, lineNickname, address, account },
+                customer: { name: nameWithNickname, phone, email, address, account },
                 items: cart,
                 subtotal,
                 shippingFee,
