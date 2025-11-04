@@ -398,6 +398,20 @@
                 </div>
 
                 <div class="form-group">
+                    <label>配送便利店 *</label>
+                    <div style="display: flex; gap: 15px; margin-top: 8px;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="radio" name="storeType" value="全家" id="storeTypeFamilyMart" required style="margin-right: 8px; width: auto;">
+                            <span>全家 FamilyMart</span>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="radio" name="storeType" value="7-11" id="storeType711" required style="margin-right: 8px; width: auto;">
+                            <span>7-11</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label>取貨縣市 *</label>
                     <select id="storeCity" required>
                         <option value="">請選擇縣市</option>
@@ -427,9 +441,14 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>7-11 門市名稱 *</label>
+                    <label>門市名稱 *</label>
                     <input type="text" id="storeName" placeholder="例如：台北車站門市" required>
-                    <small style="color: #666; font-size: 0.9em;">請至 <a href="https://emap.pcsc.com.tw/" target="_blank" style="color: #0066cc;">7-11 門市查詢</a> 查詢門市資訊</small>
+                    <small style="color: #666; font-size: 0.9em; display: block; margin-top: 5px;">
+                        門市查詢：
+                        <a href="https://www.family.com.tw/Marketing/inquiry.aspx" target="_blank" style="color: #0066cc; margin-left: 5px;">全家</a>
+                        <span style="margin: 0 5px;">|</span>
+                        <a href="https://emap.pcsc.com.tw/" target="_blank" style="color: #0066cc;">7-11</a>
+                    </small>
                 </div>
                 
                 <div class="form-group">
@@ -616,15 +635,16 @@
             const phone = document.getElementById('customerPhone').value;
             const email = document.getElementById('customerEmail').value;
             const lineNickname = document.getElementById('lineNickname').value || '無';
+            const storeType = document.querySelector('input[name="storeType"]:checked')?.value;
             const storeCity = document.getElementById('storeCity').value;
             const storeName = document.getElementById('storeName').value;
             const storeCode = document.getElementById('storeCode').value;
-            const address = `${storeCity} - ${storeName} ${storeCode ? ' [代碼:' + storeCode + ']' : ''}`;
+            const address = `${storeType}-${storeCity}-${storeName}${storeCode ? '-代碼' + storeCode : ''}`;
             const account = document.getElementById('accountLast5').value;
             const note = document.getElementById('orderNote').value;
             const screenshotFile = document.getElementById('paymentScreenshot').files[0];
 
-            if (!name || !phone || !email || !storeCity || !storeName || !account || !screenshotFile) {
+            if (!name || !phone || !email || !storeType || !storeCity || !storeName || !account || !screenshotFile) {
                 alert('請填寫所有必填欄位並上傳匯款截圖！');
                 return;
             }
