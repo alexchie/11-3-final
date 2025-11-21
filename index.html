@@ -483,14 +483,10 @@
                     <input type="text" id="storeCode" placeholder="例如：123456">
                     <small style="color: #666; font-size: 0.9em;">如果知道門市代碼可以填寫，不知道可以留空</small>
                 </div>
-                <div class="form-group">
-                    <label>匯款帳號後五碼 *</label>
-                    <input type="text" id="accountLast5" maxlength="5" required>
-                </div>
 
                 <!-- 匯款資訊顯示 -->
                 <div style="background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%); color: white; padding: 20px; border-radius: 12px; margin: 20px 0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);">
-                    <h3 style="margin: 0 0 15px 0; font-size: 1.2em; display: flex; align-items: center;">
+                    <h3 style="margin: 0 0 15px 0; font-size: 1.2em; display: flex; align-items: center; color: white;">
                         <span style="font-size: 1.5em; margin-right: 10px;">🏦</span>
                         匯款資訊
                     </h3>
@@ -510,6 +506,10 @@
                     </p>
                 </div>
 
+                <div class="form-group">
+                    <label>匯款帳號後五碼 *</label>
+                    <input type="text" id="accountLast5" maxlength="5" required>
+                </div>
                 <div class="form-group">
                     <label>匯款截圖 *</label>
                     <input type="file" id="paymentScreenshot" accept="image/*" required style="padding: 10px;">
