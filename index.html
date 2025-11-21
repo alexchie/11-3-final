@@ -468,10 +468,15 @@
                         匯款資訊
                     </h3>
                     <div style="background: rgba(255, 255, 255, 0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
-                        <p style="margin: 8px 0; font-size: 1.05em;"><strong>銀行名稱：</strong>請填寫您的銀行名稱</p>
-                        <p style="margin: 8px 0; font-size: 1.05em;"><strong>銀行代碼：</strong>請填寫您的銀行代碼</p>
-                        <p style="margin: 8px 0; font-size: 1.05em;"><strong>帳號：</strong>請填寫您的帳號</p>
-                        <p style="margin: 8px 0; font-size: 1.05em;"><strong>戶名：</strong>請填寫您的戶名</p>
+                        <p style="margin: 8px 0; font-size: 1.05em;"><strong>銀行名稱：</strong>Line Bank</p>
+                        <p style="margin: 8px 0; font-size: 1.05em;"><strong>銀行代碼：</strong>824</p>
+                        <p style="margin: 8px 0; font-size: 1.05em; display: flex; align-items: center; gap: 10px;">
+                            <span><strong>帳號：</strong><span id="bankAccount">111021661379</span></span>
+                            <button onclick="copyBankAccount()" style="background: rgba(255, 255, 255, 0.9); color: #667eea; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.9em; font-weight: bold; transition: all 0.3s; display: flex; align-items: center; gap: 5px;" onmouseover="this.style.background='white'; this.style.transform='scale(1.05)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.9)'; this.style.transform='scale(1)'">
+                                <span>📋</span>
+                                <span id="copyButtonText">複製</span>
+                            </button>
+                        </p>
                     </div>
                     <p style="margin: 15px 0 0 0; font-size: 0.9em; opacity: 0.9;">
                         ⚠️ 請完成匯款後，將匯款證明截圖上傳至下方欄位
@@ -646,6 +651,52 @@
             cart.splice(index, 1);
             updateCartBadge();
             renderCart();
+        }
+
+        // 複製銀行帳號功能
+        function copyBankAccount() {
+            const accountNumber = document.getElementById('bankAccount').textContent;
+            const buttonText = document.getElementById('copyButtonText');
+
+            // 使用 Clipboard API 複製文字
+            navigator.clipboard.writeText(accountNumber).then(() => {
+                // 複製成功，更改按鈕文字
+                buttonText.textContent = '已複製！';
+                buttonText.parentElement.style.background = '#4CAF50';
+                buttonText.parentElement.style.color = 'white';
+
+                // 2秒後恢復原狀
+                setTimeout(() => {
+                    buttonText.textContent = '複製';
+                    buttonText.parentElement.style.background = 'rgba(255, 255, 255, 0.9)';
+                    buttonText.parentElement.style.color = '#667eea';
+                }, 2000);
+            }).catch(err => {
+                // 如果 Clipboard API 不支援，使用舊方法
+                const textArea = document.createElement('textarea');
+                textArea.value = accountNumber;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+
+                try {
+                    document.execCommand('copy');
+                    buttonText.textContent = '已複製！';
+                    buttonText.parentElement.style.background = '#4CAF50';
+                    buttonText.parentElement.style.color = 'white';
+
+                    setTimeout(() => {
+                        buttonText.textContent = '複製';
+                        buttonText.parentElement.style.background = 'rgba(255, 255, 255, 0.9)';
+                        buttonText.parentElement.style.color = '#667eea';
+                    }, 2000);
+                } catch (err) {
+                    alert('複製失敗，請手動複製帳號：' + accountNumber);
+                }
+
+                document.body.removeChild(textArea);
+            });
         }
 
         // 壓縮圖片函數
