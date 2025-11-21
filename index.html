@@ -372,13 +372,21 @@
             <span class="close" onclick="closeCart()">&times;</span>
             <h2 style="margin-bottom: 20px;">購物車</h2>
             <div id="cartItems"></div>
-            <div class="total">總計：NT$ <span id="totalPrice">0</span></div>
+            <div class="total">
+                <div style="margin-bottom: 8px;">小計：NT$ <span id="subtotalPrice">0</span></div>
+                <div style="margin-bottom: 8px;">運費：NT$ <span id="shippingFee">40</span> <span id="shippingNote" style="color: #666; font-size: 0.9em;"></span></div>
+                <div style="border-top: 2px solid #000; padding-top: 8px; font-size: 1.2em;">總計：NT$ <span id="totalPrice">0</span></div>
+            </div>
 
             <div class="form-section">
                 <h3 style="margin-bottom: 20px;">填寫訂購資訊</h3>
                 <div class="form-group">
                     <label>姓名 *</label>
                     <input type="text" id="customerName" required>
+                </div>
+                <div class="form-group">
+                    <label>Line 匿名稱號 (若無則填寫「無」，僅方便聯絡用)</label>
+                    <input type="text" id="lineNickname" placeholder="請輸入Line稱號或填寫「無」">
                 </div>
                 <div class="form-group">
                     <label>電話 *</label>
@@ -388,7 +396,21 @@
                     <label>Email *</label>
                     <input type="email" id="customerEmail" value="@gmail.com" required>
                 </div>
-                
+
+                <div class="form-group">
+                    <label>配送便利店 *</label>
+                    <div style="display: flex; gap: 15px; margin-top: 8px;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="radio" name="storeType" value="全家" id="storeTypeFamilyMart" required style="margin-right: 8px; width: auto;">
+                            <span>全家 FamilyMart</span>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="radio" name="storeType" value="7-11" id="storeType711" required style="margin-right: 8px; width: auto;">
+                            <span>7-11</span>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label>取貨縣市 *</label>
                     <select id="storeCity" required>
@@ -419,9 +441,14 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>7-11 門市名稱 *</label>
+                    <label>門市名稱 *</label>
                     <input type="text" id="storeName" placeholder="例如：台北車站門市" required>
-                    <small style="color: #666; font-size: 0.9em;">請至 <a href="https://emap.pcsc.com.tw/" target="_blank" style="color: #0066cc;">7-11 門市查詢</a> 查詢門市資訊</small>
+                    <small style="color: #666; font-size: 0.9em; display: block; margin-top: 5px;">
+                        門市查詢：
+                        <a href="https://www.family.com.tw/Marketing/inquiry.aspx" target="_blank" style="color: #0066cc; margin-left: 5px;">全家</a>
+                        <span style="margin: 0 5px;">|</span>
+                        <a href="https://emap.pcsc.com.tw/" target="_blank" style="color: #0066cc;">7-11</a>
+                    </small>
                 </div>
                 
                 <div class="form-group">
@@ -433,6 +460,29 @@
                     <label>匯款帳號後五碼 *</label>
                     <input type="text" id="accountLast5" maxlength="5" required>
                 </div>
+
+                <!-- 匯款資訊顯示 -->
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; margin: 20px 0; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
+                    <h3 style="margin: 0 0 15px 0; font-size: 1.2em; display: flex; align-items: center;">
+                        <span style="font-size: 1.5em; margin-right: 10px;">🏦</span>
+                        匯款資訊
+                    </h3>
+                    <div style="background: rgba(255, 255, 255, 0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+                        <p style="margin: 8px 0; font-size: 1.05em;"><strong>銀行名稱：</strong>Line Bank</p>
+                        <p style="margin: 8px 0; font-size: 1.05em;"><strong>銀行代碼：</strong>824</p>
+                        <p style="margin: 8px 0; font-size: 1.05em; display: flex; align-items: center; gap: 10px;">
+                            <span><strong>帳號：</strong><span id="bankAccount">111021661379</span></span>
+                            <button onclick="copyBankAccount()" style="background: rgba(255, 255, 255, 0.9); color: #667eea; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.9em; font-weight: bold; transition: all 0.3s; display: flex; align-items: center; gap: 5px;" onmouseover="this.style.background='white'; this.style.transform='scale(1.05)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.9)'; this.style.transform='scale(1)'">
+                                <span>📋</span>
+                                <span id="copyButtonText">複製</span>
+                            </button>
+                        </p>
+                    </div>
+                    <p style="margin: 15px 0 0 0; font-size: 0.9em; opacity: 0.9;">
+                        ⚠️ 請完成匯款後，將匯款證明截圖上傳至下方欄位
+                    </p>
+                </div>
+
                 <div class="form-group">
                     <label>匯款截圖 *</label>
                     <input type="file" id="paymentScreenshot" accept="image/*" required style="padding: 10px;">
@@ -443,6 +493,9 @@
                     <textarea id="orderNote" rows="2"></textarea>
                 </div>
                 <button class="submit-order" onclick="submitOrder()">確認送出訂單</button>
+                <p style="text-align: center; color: #d32f2f; margin-top: 15px; font-size: 0.95em; line-height: 1.5;">
+                    ⚠️ 注意：因商品有保存期限問題，恕不接受退貨
+                </p>
             </div>
 
             <div id="orderSummary"></div>
@@ -456,7 +509,7 @@
             { id: 3, name: 'TWG 特威經典茶包', price: 900, description: '盒裝 15入', image: 'https://drive.google.com/thumbnail?id=1yhefmyDqMeYh94kAOsMweRcGkIHXs6MV&sz=w1000', category: 'twg-tea' },
             { id: 4, name: 'TWG 經典組合', price: 900, description: '英國早餐茶、法式伯爵茶、洋甘菊茶盒裝 15入 (各5入)', image: 'https://drive.google.com/thumbnail?id=19IdsZN5fcf--8sznQX5nHgV8ZVy5LdWK&sz=w1000', category: 'twg-tea' },
             { id: 5, name: 'TWG 茶葉五組禮品盒', price: 5000, description: '盒裝 5罐', image: 'https://drive.google.com/thumbnail?id=18vwo94GGu3LzIR5H9AXJGpCTVZVEbmG8&sz=w1000', category: 'twg-tea' },
-            { id: 6, name: 'TWG Teasticks 糖棒', price: 180, description: '4根入', image: 'https://drive.google.com/thumbnail?id=1-lunyL7C_3ooAaTG-n-ksshjvmTRp1sM&sz=w1000', category: 'twg-tea' },
+            { id: 6, name: 'TWG Teasticks 糖棒', price: 180, description: '4根入', image: 'https://drive.google.com/thumbnail?id=1-lunyL7C_3ooAaTG-n-ksshjvmTRp1sM&sz=w1000', category: 'twg-dessert' },
             { id: 7, name: 'TWG 小熊茶香軟糖 - 草莓茶', price: 550, description: '罐裝(200g)', image: 'https://drive.google.com/thumbnail?id=1AL3ChRznx9Q9s72HMN0MhTaDFFL9Oc9n&sz=w1000', category: 'twg-dessert' },
             { id: 8, name: 'TWG 小熊茶香軟糖 - 覆盆子與香草茶', price: 550, description: '罐裝(200g)', image: 'https://drive.google.com/thumbnail?id=1vtkI5z162RazTMe81O8PGxP6GMbHEVn4&sz=w1000', category: 'twg-dessert' },
             { id: 9, name: 'TWG 小熊茶香軟糖 - 西柚橙茶', price: 550, description: '罐裝(200g)', image: 'https://drive.google.com/thumbnail?id=1sxuIwlnoR7IG8RDaFOh3qSaF-mMcyyoL&sz=w1000', category: 'twg-dessert' },
@@ -467,7 +520,7 @@
             { id: 14, name: 'TWG 小熊茶香軟糖 - 蘋果與葡萄茶', price: 550, description: '罐裝(200g)', image: 'https://drive.google.com/thumbnail?id=1hqzCV6hBNVmIVzidQ7p7-CS5Ld1dMYfT&sz=w1000', category: 'twg-dessert' },
             { id: 15, name: '百勝廚叻沙泡麵', price: 350, description: '4包入', image: 'https://drive.google.com/thumbnail?id=1wPMFdpAdLtA-hJu1kYT5-jA42B3dUBby&sz=w1000', category: 'noodles' },
             { id: 16, name: '百勝廚蝦湯泡麵', price: 350, description: '4包入', image: 'https://drive.google.com/thumbnail?id=1ZVJNsOE3lil-OAweebpFyOdRkliRZzxb&sz=w1000', category: 'noodles' },
-            { id: 17, name: '百勝廚辣蝦麵泡麵', price: 350, description: '4包入', image: 'https://drive.google.com/thumbnail?id=1GDL6BTA1sX1A0szlpFxON4bWnTgiZaws&sz=w1000', category: 'noodles' },
+            { id: 17, name: '百勝廚辣螃蟹泡麵', price: 350, description: '4包入', image: 'https://drive.google.com/thumbnail?id=1GDL6BTA1sX1A0szlpFxON4bWnTgiZaws&sz=w1000', category: 'noodles' },
             { id: 18, name: 'IRVINS 鹹蛋泡麵', price: 275, description: '5包入', image: 'https://drive.google.com/thumbnail?id=125700upQGXoG4Pnzk5Zub43wO3R1Yht-&sz=w1000', category: 'noodles' },
             { id: 19, name: 'IRVINS 魚皮（小包 95g)', price: 270, description: '1包', image: 'https://drive.google.com/thumbnail?id=14AlKpwF0s5piopxZBkdhTL2vhpvDclPO&sz=w1000', category: 'snacks' },
             { id: 20, name: 'IRVINS 魚皮（大包 230g）', price: 530, description: '1包', image: 'https://drive.google.com/thumbnail?id=19_kPfhQxPzzgK6l_IDyjTJm8eVib8PG2&sz=w1000', category: 'snacks' },
@@ -566,7 +619,10 @@
             const cartItemsDiv = document.getElementById('cartItems');
             if (cart.length === 0) {
                 cartItemsDiv.innerHTML = '<p style="text-align: center; color: #999;">購物車是空的</p>';
-                document.getElementById('totalPrice').textContent = '0';
+                document.getElementById('subtotalPrice').textContent = '0';
+                document.getElementById('shippingFee').textContent = '40';
+                document.getElementById('shippingNote').textContent = '';
+                document.getElementById('totalPrice').textContent = '40';
                 return;
             }
 
@@ -581,7 +637,13 @@
                 </div>
             `).join('');
 
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shippingFee = subtotal >= 600 ? 0 : 40;
+            const total = subtotal + shippingFee;
+
+            document.getElementById('subtotalPrice').textContent = subtotal;
+            document.getElementById('shippingFee').textContent = shippingFee;
+            document.getElementById('shippingNote').textContent = subtotal >= 600 ? '(滿600元免運)' : '';
             document.getElementById('totalPrice').textContent = total;
         }
 
@@ -591,58 +653,183 @@
             renderCart();
         }
 
+        // 複製銀行帳號功能
+        function copyBankAccount() {
+            const accountNumber = document.getElementById('bankAccount').textContent;
+            const buttonText = document.getElementById('copyButtonText');
+
+            // 使用 Clipboard API 複製文字
+            navigator.clipboard.writeText(accountNumber).then(() => {
+                // 複製成功，更改按鈕文字
+                buttonText.textContent = '已複製！';
+                buttonText.parentElement.style.background = '#4CAF50';
+                buttonText.parentElement.style.color = 'white';
+
+                // 2秒後恢復原狀
+                setTimeout(() => {
+                    buttonText.textContent = '複製';
+                    buttonText.parentElement.style.background = 'rgba(255, 255, 255, 0.9)';
+                    buttonText.parentElement.style.color = '#667eea';
+                }, 2000);
+            }).catch(err => {
+                // 如果 Clipboard API 不支援，使用舊方法
+                const textArea = document.createElement('textarea');
+                textArea.value = accountNumber;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+
+                try {
+                    document.execCommand('copy');
+                    buttonText.textContent = '已複製！';
+                    buttonText.parentElement.style.background = '#4CAF50';
+                    buttonText.parentElement.style.color = 'white';
+
+                    setTimeout(() => {
+                        buttonText.textContent = '複製';
+                        buttonText.parentElement.style.background = 'rgba(255, 255, 255, 0.9)';
+                        buttonText.parentElement.style.color = '#667eea';
+                    }, 2000);
+                } catch (err) {
+                    alert('複製失敗，請手動複製帳號：' + accountNumber);
+                }
+
+                document.body.removeChild(textArea);
+            });
+        }
+
+        // 壓縮圖片函數
+        async function compressImage(file, maxWidth = 1200, quality = 0.7) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        // 如果圖片寬度超過maxWidth，按比例縮小
+                        if (width > maxWidth) {
+                            height = (height * maxWidth) / width;
+                            width = maxWidth;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // 轉換為base64，使用指定的品質
+                        canvas.toBlob(
+                            (blob) => {
+                                const compressedReader = new FileReader();
+                                compressedReader.onload = (event) => resolve(event.target.result);
+                                compressedReader.onerror = reject;
+                                compressedReader.readAsDataURL(blob);
+                            },
+                            'image/jpeg',
+                            quality
+                        );
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
         async function submitOrder() {
+            // 獲取提交按鈕並禁用，防止重複提交
+            const submitButton = document.querySelector('.submit-order');
+            submitButton.disabled = true;
+            submitButton.style.opacity = '0.6';
+            submitButton.style.cursor = 'not-allowed';
+            submitButton.textContent = '處理中...';
+
             const name = document.getElementById('customerName').value;
             const phone = document.getElementById('customerPhone').value;
             const email = document.getElementById('customerEmail').value;
+            const lineNickname = document.getElementById('lineNickname').value || '無';
+            const storeType = document.querySelector('input[name="storeType"]:checked')?.value;
             const storeCity = document.getElementById('storeCity').value;
             const storeName = document.getElementById('storeName').value;
             const storeCode = document.getElementById('storeCode').value;
-            const address = `${storeCity} - ${storeName} ${storeCode ? ' [代碼:' + storeCode + ']' : ''}`;
+            const address = `${storeType}-${storeCity}-${storeName}${storeCode ? '-代碼' + storeCode : ''}`;
             const account = document.getElementById('accountLast5').value;
             const note = document.getElementById('orderNote').value;
             const screenshotFile = document.getElementById('paymentScreenshot').files[0];
 
-            if (!name || !phone || !email || !storeCity || !storeName || !account || !screenshotFile) {
+            if (!name || !phone || !email || !storeType || !storeCity || !storeName || !account || !screenshotFile) {
                 alert('請填寫所有必填欄位並上傳匯款截圖！');
+                submitButton.disabled = false;
+                submitButton.style.opacity = '1';
+                submitButton.style.cursor = 'pointer';
+                submitButton.textContent = '確認送出訂單';
                 return;
             }
 
             // 驗證 Email 格式
             if (!email.includes('@') || email === '@gmail.com') {
                 alert('請輸入完整的 Email 地址！');
+                submitButton.disabled = false;
+                submitButton.style.opacity = '1';
+                submitButton.style.cursor = 'pointer';
+                submitButton.textContent = '確認送出訂單';
                 return;
             }
 
             if (cart.length === 0) {
                 alert('購物車是空的！');
+                submitButton.disabled = false;
+                submitButton.style.opacity = '1';
+                submitButton.style.cursor = 'pointer';
+                submitButton.textContent = '確認送出訂單';
                 return;
             }
 
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shippingFee = subtotal >= 600 ? 0 : 40;
+            const total = subtotal + shippingFee;
             const orderTime = new Date().toLocaleString('zh-TW');
 
-            // 將截圖轉換為 base64
-            const screenshotBase64 = await new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.onerror = reject;
-                reader.readAsDataURL(screenshotFile);
-            });
+            // 合併姓名和匿名稱號
+            const nameWithNickname = `${name}(${lineNickname})`;
+
+            // 顯示處理進度
+            document.getElementById('orderSummary').innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="font-size: 3em;">📸</div>
+                    <h3>正在處理圖片...</h3>
+                    <p style="color: #666; margin-top: 10px;">請稍候，圖片壓縮中</p>
+                </div>
+            `;
+
+            // 壓縮截圖（最大寬度1200px，品質0.7）
+            const screenshotBase64 = await compressImage(screenshotFile, 1200, 0.7);
+
+            console.log('原始檔案大小:', screenshotFile.size, 'bytes');
+            console.log('壓縮後大小:', screenshotBase64.length, 'bytes');
 
             const orderData = {
                 orderTime,
-                customer: { name, phone, email, address, account },
+                customer: { name: nameWithNickname, phone, email, address, account },
                 items: cart,
+                subtotal,
+                shippingFee,
                 total,
                 note,
                 paymentScreenshot: screenshotBase64,
                 screenshotFilename: screenshotFile.name
             };
 
+            // 更新為傳送狀態
             document.getElementById('orderSummary').innerHTML = `
                 <div style="text-align: center; padding: 40px;">
-                    <div style="font-size: 3em;">⏳</div>
+                    <div style="font-size: 3em;">📤</div>
                     <h3>正在送出訂單...</h3>
                     <p style="color: #666; margin-top: 10px;">請稍候，資料傳送中</p>
                 </div>
@@ -666,12 +853,8 @@
                         sendEmail: true
                     })
                 });
-                
-                console.log('資料已送出');
-                
-                await new Promise(resolve => setTimeout(resolve, 3000));
-                
-                console.log('訂單處理完成');
+
+                console.log('訂單已成功送出');
 
                 const summaryHTML = `
                     <div class="success-message">
@@ -712,6 +895,11 @@
                         <p>請稍後再試，或直接聯繫我們</p>
                     </div>
                 `;
+                // 重新啟用提交按鈕
+                submitButton.disabled = false;
+                submitButton.style.opacity = '1';
+                submitButton.style.cursor = 'pointer';
+                submitButton.textContent = '確認送出訂單';
             }
         }
 
