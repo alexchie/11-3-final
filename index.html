@@ -69,56 +69,93 @@
         .category-nav {
             text-align: center;
             margin: -20px 0 40px 0;
-            padding: 20px;
+            padding: 25px 20px;
             background: linear-gradient(135deg, #f8f9fa 0%, #f5f5f5 100%);
             border-radius: 15px;
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+        }
+
+        .category-nav::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .category-nav::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .category-nav::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .category-nav::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        /* 分類按鈕容器 */
+        .category-nav > div {
+            display: inline-flex;
+            gap: 12px;
+            min-width: min-content;
         }
 
         .category-nav button {
             background: white;
-            border: 2px solid #e0e0e0;
-            padding: 12px 24px;
-            margin: 5px 8px;
-            border-radius: 25px;
+            border: none;
+            padding: 10px 20px;
+            margin: 0;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 1em;
+            font-size: 0.95em;
             font-family: 'Microsoft JhengHei', Arial, sans-serif;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-weight: 500;
             position: relative;
-            overflow: hidden;
+            white-space: nowrap;
+            flex-shrink: 0;
+            color: #333;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), inset 0 -2px 0 rgba(0, 0, 0, 0.05);
         }
 
-        .category-nav button::before {
+        /* 底部指示器 */
+        .category-nav button::after {
             content: '';
             position: absolute;
-            top: 50%;
+            bottom: 0;
             left: 50%;
             width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.05);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .category-nav button:hover::before {
-            width: 300px;
-            height: 300px;
+            height: 3px;
+            background: linear-gradient(90deg, #1a1a1a, #000000);
+            transform: translateX(-50%);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 3px 3px 0 0;
         }
 
         .category-nav button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
-            border-color: #000000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), inset 0 -2px 0 rgba(0, 0, 0, 0.08);
+            color: #000;
+        }
+
+        .category-nav button:hover::after {
+            width: 60%;
         }
 
         .category-nav button.active {
             background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
             color: white;
-            border-color: #000000;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .category-nav button.active::after {
+            width: 100%;
+            background: linear-gradient(90deg, #ffffff, #e0e0e0);
         }
 
         .cart-badge {
@@ -557,13 +594,15 @@
         </div>
 
         <div class="category-nav">
-            <button class="active" onclick="filterByCategory('all')">全部商品</button>
-            <button onclick="filterByCategory('twg-tea')">TWG 經典茶品</button>
-            <button onclick="filterByCategory('twg-dessert')">TWG 特色商品</button>
-            <button onclick="filterByCategory('noodles')">泡麵系列</button>
-            <button onclick="filterByCategory('snacks')">零食系列</button>
-            <button onclick="filterByCategory('condiments')">亞坤醬 & 松發肉骨茶包</button>
-            <button onclick="filterByCategory('coffee')">Kims Duet咖啡</button>
+            <div>
+                <button class="active" onclick="filterByCategory('all')">📦 全部商品</button>
+                <button onclick="filterByCategory('twg-tea')">🍵 TWG 經典茶品</button>
+                <button onclick="filterByCategory('twg-dessert')">🍬 TWG 特色商品</button>
+                <button onclick="filterByCategory('noodles')">🍜 泡麵系列</button>
+                <button onclick="filterByCategory('snacks')">🍪 零食系列</button>
+                <button onclick="filterByCategory('condiments')">🍯 亞坤醬 & 松發肉骨茶包</button>
+                <button onclick="filterByCategory('coffee')">☕ Kims Duet咖啡</button>
+            </div>
         </div>
 
         <div class="products-grid" id="productsGrid"></div>
