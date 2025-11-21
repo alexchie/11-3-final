@@ -369,6 +369,134 @@
             color: #333;
         }
 
+        /* 商品詳情模態框 */
+        .product-detail-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 3000;
+            overflow-y: auto;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .product-detail-content {
+            background: white;
+            margin: 50px auto;
+            padding: 0;
+            max-width: 900px;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .product-detail-close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 2.5em;
+            cursor: pointer;
+            color: white;
+            z-index: 10;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            line-height: 1;
+        }
+
+        .product-detail-close:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: rotate(90deg);
+        }
+
+        .product-detail-image-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .product-detail-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 30px;
+        }
+
+        .product-detail-info {
+            padding: 40px;
+        }
+
+        .product-detail-name {
+            font-size: 2em;
+            font-weight: bold;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+        }
+
+        .product-detail-price {
+            font-size: 1.8em;
+            color: #000000;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .product-detail-spec {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .product-detail-description {
+            font-size: 1.05em;
+            line-height: 1.8;
+            color: #333;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #1a1a1a;
+        }
+
+        .product-detail-description h4 {
+            margin: 0 0 10px 0;
+            color: #1a1a1a;
+            font-size: 1.2em;
+        }
+
         .cart-item {
             display: flex;
             justify-content: space-between;
@@ -785,13 +913,43 @@
         function filterByCategory(category) {
             currentCategory = category;
             renderProducts();
-            
+
             // Update active button
             document.querySelectorAll('.category-nav button').forEach(btn => {
                 btn.classList.remove('active');
             });
             event.target.classList.add('active');
         }
+
+        // 顯示商品詳情
+        function showProductDetail(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            document.getElementById('productDetailImage').src = product.image;
+            document.getElementById('productDetailImage').alt = product.name;
+            document.getElementById('productDetailName').textContent = product.name;
+            document.getElementById('productDetailPrice').textContent = `NT$ ${product.price}`;
+            document.getElementById('productDetailSpec').textContent = product.description;
+            document.getElementById('productDetailDescriptionText').textContent = '這是一個精選的優質商品，品質保證，值得您的信賴與選購。';
+
+            document.getElementById('productDetailModal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // 防止背景滾動
+        }
+
+        // 關閉商品詳情
+        function closeProductDetail() {
+            document.getElementById('productDetailModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // 恢復滾動
+        }
+
+        // 點擊模態框背景關閉
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('productDetailModal');
+            if (event.target === modal) {
+                closeProductDetail();
+            }
+        });
 
         function renderProducts() {
             const grid = document.getElementById('productsGrid');
@@ -801,7 +959,7 @@
             
             grid.innerHTML = filteredProducts.map(product => `
                 <div class="product-card">
-                    <img src="${product.image}" alt="${product.name}">
+                    <img src="${product.image}" alt="${product.name}" onclick="showProductDetail(${product.id})" style="cursor: pointer;">
                     <div class="product-name">${product.name}</div>
                     <div class="product-description">${product.description}</div>
                     <div class="product-price">NT$ ${product.price}</div>
@@ -1151,5 +1309,25 @@
             renderProducts();
         };
     </script>
+
+    <!-- 商品詳情模態框 -->
+    <div id="productDetailModal" class="product-detail-modal">
+        <div class="product-detail-content">
+            <span class="product-detail-close" onclick="closeProductDetail()">&times;</span>
+            <div class="product-detail-image-container">
+                <img id="productDetailImage" src="" alt="" class="product-detail-image">
+            </div>
+            <div class="product-detail-info">
+                <h2 class="product-detail-name" id="productDetailName"></h2>
+                <div class="product-detail-price" id="productDetailPrice"></div>
+                <div class="product-detail-spec" id="productDetailSpec"></div>
+                <div class="product-detail-description" id="productDetailDescription">
+                    <h4>📝 商品介紹</h4>
+                    <p id="productDetailDescriptionText"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
